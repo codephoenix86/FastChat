@@ -1,0 +1,27 @@
+{
+  "name": "fastchat",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["chat", "real-time", "socket.io", "nodejs", "rest-api", "production-ready"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codephoenix86/fastchat.git"
+  },
+  "author": "Naresh Lohar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codephoenix86/fastchat/issues"
+  },
+  "homepage": "https://github.com/codephoenix86/fastchat#readme",
+  "description": "A highly scalable, feature-rich chat API for modern applications, supporting real-time messaging, presence, media sharing, and advanced conversation management",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
