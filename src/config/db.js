@@ -1,10 +1,66 @@
 const mongoose = require('mongoose')
-const { dbUri } = require('./env')
-module.exports = async () => {
+const logger = require('./logger')
+
+// Register connection event handlers once
+let listenersRegistered = false
+
+const registerEventHandlers = () => {
+  if (listenersRegistered) return
+  
+  mongoose.connection.on('error', err => {
+    logger.error('Database connection error:', err)
+  })
+
+  mongoose.connection.on('disconnected', () => {
+    logger.warn('Database disconnected')
+  })
+
+  mongoose.connection.on('reconnected', () => {
+    logger.info('Database reconnected')
+  })
+  
+  listenersRegistered = true
+}
+
+const connectDB = async (retries = 5) => {
+  const dbUri = process.env.MONGO_URI
+
   try {
-    await mongoose.connect(dbUri)
-    console.log('database connected successfully')
+    await mongoose.connect(dbUri, {
+      maxPoolSize: 10,
+      minPoolSize: 2,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    })
+
+    logger.info('Database connected successfully')
+    
+    // Register event handlers only once
+    registerEventHandlers()
   } catch (err) {
-    console.log(err)
+    logger.error('Database connection failed:', {
+      error: err.message,
+      retries: retries,
+    })
+
+    if (retries > 0) {
+      logger.info(`Retrying connection... (${retries} attempts left)`)
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      return connectDB(retries - 1)
+    }
+
+    logger.error('Failed to connect to database after multiple attempts')
+    process.exit(1)
   }
 }
+
+const disconnectDB = async () => {
+  try {
+    await mongoose.connection.close()
+    logger.info('Database connection closed')
+  } catch (err) {
+    logger.error('Error closing database connection:', err)
+  }
+}
+
+module.exports = { connectDB, disconnectDB }
