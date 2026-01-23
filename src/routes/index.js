@@ -1,4 +1,10 @@
 const express = require('express')
 const router = express.Router()
-router.use('/v1', require('./v1'))
+
+// health check route
+router.use('/health', require('./health.routes'))
+
+// API routes
+router.use('/api', require('./api'))
+
 module.exports = router
