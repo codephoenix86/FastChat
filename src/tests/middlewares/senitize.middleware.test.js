@@ -1,5 +1,5 @@
-const sanitize = require('../../middlewares/sanitize.middleware')
-const { mockRequest, mockResponse, mockNext } = require('../helpers')
+const sanitize = require('@middlewares/sanitize.middleware')
+const { mockRequest, mockResponse, mockNext } = require('@tests/helpers')
 
 describe('Sanitize Middleware', () => {
   it('should sanitize string values in request body', () => {

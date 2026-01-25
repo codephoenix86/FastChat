@@ -1,16 +1,16 @@
-const { accessToken, refreshToken } = require('../../middlewares/auth.middleware')
-const { mockRequest, mockResponse, mockNext, createObjectId } = require('../helpers')
-const { ValidationError, AuthError } = require('../../utils/errors/errors')
-const { generateTokens } = require('../../utils/auth/jwt')
+const { accessToken, refreshToken } = require('@middlewares/auth.middleware')
+const { mockRequest, mockResponse, mockNext, createObjectId } = require('@tests/helpers')
+const { ValidationError, AuthError } = require('@errors/errors')
+const { generateTokens } = require('@auth/jwt')
 
 // Mock dependencies
-jest.mock('../../repositories', () => ({
+jest.mock('@repositories', () => ({
   refreshTokenRepository: {
     exists: jest.fn(),
   },
 }))
 
-const { refreshTokenRepository } = require('../../repositories')
+const { refreshTokenRepository } = require('@repositories')
 
 describe('Auth Middleware', () => {
   describe('accessToken', () => {
@@ -72,7 +72,7 @@ describe('Auth Middleware', () => {
 
     it('should throw AuthError when token is expired', () => {
       const jwt = require('jsonwebtoken')
-      const { env } = require('../../config')
+      const { env } = require('@config')
       const expiredToken = jwt.sign({ id: 'test' }, env.JWT_SECRET, { expiresIn: '0s' })
 
       const req = mockRequest({

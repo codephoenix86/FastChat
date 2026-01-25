@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { MESSAGE_TYPES, MESSAGE_STATUS } = require('../constants')
+const { MESSAGE_TYPES, MESSAGE_STATUS } = require('@constants')
 
 const schema = new mongoose.Schema(
   {

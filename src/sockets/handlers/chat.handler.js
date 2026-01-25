@@ -1,5 +1,5 @@
-const EVENTS = require('../events')
-const { logger } = require('../../config')
+const EVENTS = require('@sockets/events')
+const { logger } = require('@config')
 
 /**
  * Handle chat room events (join/leave)

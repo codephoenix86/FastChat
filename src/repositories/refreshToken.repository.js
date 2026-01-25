@@ -1,4 +1,4 @@
-const { RefreshToken } = require('../models')
+const { RefreshToken } = require('@models')
 
 class RefreshTokenRepository {
   async create(tokenData) {

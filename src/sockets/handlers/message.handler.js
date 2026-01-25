@@ -1,6 +1,6 @@
-const { messageService } = require('../../services')
-const EVENTS = require('../events')
-const { logger } = require('../../config')
+const { messageService } = require('@services')
+const EVENTS = require('@sockets/events')
+const { logger } = require('@config')
 
 /**
  * Handle message status events (delivered/read)

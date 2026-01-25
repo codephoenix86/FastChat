@@ -1,6 +1,6 @@
-const { authService } = require('../services')
-const { ApiResponse } = require('../utils')
-const { HTTP_STATUS } = require('../constants')
+const { authService } = require('@services')
+const { ApiResponse } = require('@utils')
+const { HTTP_STATUS } = require('@constants')
 
 exports.signup = async (req, res) => {
   const { username, password, email } = req.body

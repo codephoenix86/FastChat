@@ -1,7 +1,8 @@
 const { body } = require('express-validator')
 const mongoose = require('mongoose')
-const { errors } = require('../../utils')
-const { CHAT_TYPES } = require('../../constants')
+
+const { errors } = require('@utils')
+const { CHAT_TYPES } = require('@constants')
 
 exports.create = [
   body().custom(body => {

@@ -1,4 +1,4 @@
-const { Message } = require('../models')
+const { Message } = require('@models')
 
 class MessageRepository {
   async create(messageData) {

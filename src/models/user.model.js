@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-const { USER_ROLES, VALIDATION } = require('../constants')
+
+const { USER_ROLES, VALIDATION } = require('@constants')
 
 const schema = new mongoose.Schema(
   {

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 
-const { AuthError } = require('../errors/errors')
-const { env } = require('../../config')
+const { AuthError } = require('@errors/errors')
+const { env } = require('@config')
 
 /**
  * Generate access and refresh tokens

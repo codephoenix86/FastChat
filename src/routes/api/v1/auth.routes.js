@@ -1,7 +1,8 @@
 const express = require('express')
-const { auth, validators, validate } = require('../../../middlewares')
-const { authControllers } = require('../../../controllers')
-const { asyncHandler } = require('../../../utils')
+
+const { auth, validators, validate } = require('@middlewares')
+const { authControllers } = require('@controllers')
+const { asyncHandler } = require('@utils')
 
 const router = express.Router()
 

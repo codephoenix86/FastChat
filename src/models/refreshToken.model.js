@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const ms = require('ms')
 
-const { env } = require('../config')
+const { env } = require('@config')
 
 const schema = new mongoose.Schema({
   user: {

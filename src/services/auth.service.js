@@ -1,7 +1,7 @@
-const { userRepository, refreshTokenRepository } = require('../repositories')
-const { errors, jwt } = require('../utils')
+const { userRepository, refreshTokenRepository } = require('@repositories')
+const { errors, jwt } = require('@utils')
+const { logger } = require('@config')
 const { verifyCredentials } = require('./auth/credentials')
-const { logger } = require('../config')
 
 const { AuthError, ConflictError } = errors
 const { generateTokens } = jwt

@@ -1,11 +1,11 @@
 const { Server } = require('socket.io')
-const { userRepository } = require('../repositories')
+const { userRepository } = require('@repositories')
 const { pushPendingMessages } = require('./utils')
 const onlineUsersService = require('./services/online-users.service')
 const { authenticate } = require('./middlewares/auth.middleware')
 const { chatHandler, messageHandler, typingHandler } = require('./handlers')
 const EVENTS = require('./events')
-const { logger, env } = require('../config')
+const { logger, env } = require('@config')
 
 let io = undefined
 

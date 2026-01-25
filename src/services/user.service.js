@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt')
 const path = require('path')
 const fs = require('fs').promises
-const { userRepository } = require('../repositories')
-const { errors } = require('../utils')
-const { logger } = require('../config')
+const { userRepository } = require('@repositories')
+const { errors } = require('@utils')
+const { logger } = require('@config')
 
 const { NotFoundError, AuthError, ConflictError } = errors
 

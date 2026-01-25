@@ -3,7 +3,7 @@
  * Centralizes all configuration modules
  */
 module.exports = {
-  env: require('./env'),
-  db: require('./db'),
-  logger: require('./logger'),
+  env: require('@config/env'),
+  db: require('@config/db'),
+  logger: require('@config/logger'),
 }

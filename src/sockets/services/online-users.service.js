@@ -1,4 +1,4 @@
-const { logger } = require('../../config')
+const { logger } = require('@config')
 
 /**
  * Service to manage online users and their socket connections

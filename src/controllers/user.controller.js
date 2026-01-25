@@ -1,6 +1,6 @@
-const { userService } = require('../services')
-const { ApiResponse, pagination, errors } = require('../utils')
-const { HTTP_STATUS } = require('../constants')
+const { userService } = require('@services')
+const { ApiResponse, pagination, errors } = require('@utils')
+const { HTTP_STATUS } = require('@constants')
 
 /**
  * Get all users with pagination, filtering, and search

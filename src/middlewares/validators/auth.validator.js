@@ -1,6 +1,6 @@
 const { body } = require('express-validator')
-const { errors } = require('../../utils')
-const { VALIDATION } = require('../../constants')
+const { errors } = require('@utils')
+const { VALIDATION } = require('@constants')
 
 exports.signup = [
   body('email')

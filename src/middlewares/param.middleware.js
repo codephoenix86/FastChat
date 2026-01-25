@@ -1,4 +1,4 @@
-const { errors } = require('../utils')
+const { errors } = require('@utils')
 const mongoose = require('mongoose')
 
 /**

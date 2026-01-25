@@ -7,8 +7,12 @@
     "dev": "nodemon server.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "test:unit": "jest --testPathPattern=tests",
+    "test:unit": "jest --testPathPattern=tests/(middlewares|services|utils) --coverage",
+    "test:integration": "jest --testPathPattern=tests/integration --runInBand",
+    "test:integration:watch": "jest --testPathPattern=tests/integration --watch --runInBand",
+    "test:integration:coverage": "jest --testPathPattern=tests/integration --coverage --runInBand",
     "test:verbose": "jest --verbose --coverage",
+    "test:all": "jest --coverage --runInBand",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.js\""
   },
@@ -41,6 +45,7 @@
     "express-validator": "^7.2.1",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "mongoose": "^8.18.3",
     "ms": "^2.1.3",
     "multer": "^2.0.2",
@@ -52,7 +57,29 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "jest": "^30.2.0",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "supertest": "^7.2.2"
+  },
+  "_moduleAliases": {
+    "@": "src",
+    "@root": ".",
+    "@config": "src/config",
+    "@constants": "src/constants",
+    "@controllers": "src/controllers",
+    "@docs": "src/docs",
+    "@middlewares": "src/middlewares",
+    "@models": "src/models",
+    "@repositories": "src/repositories",
+    "@routes": "src/routes",
+    "@services": "src/services",
+    "@sockets": "src/sockets",
+    "@tests": "src/tests",
+    "@utils": "src/utils",
+    "@uploads": "uploads",
+    "@auth": "src/utils/auth",
+    "@errors": "src/utils/errors",
+    "@helpers": "src/utils/helpers",
+    "@response": "src/utils/response"
   },
   "engines": {
     "node": ">=18.0.0",

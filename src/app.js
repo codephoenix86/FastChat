@@ -4,9 +4,9 @@ const cors = require('cors')
 const helmet = require('helmet')
 const app = express()
 
-const routes = require('./routes')
-const { errorHandler, sanitize } = require('./middlewares')
-const { logger, env } = require('./config')
+const routes = require('@routes')
+const { errorHandler, sanitize } = require('@middlewares')
+const { logger, env } = require('@config')
 
 // Security middleware
 app.use(helmet())

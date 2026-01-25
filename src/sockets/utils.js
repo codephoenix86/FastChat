@@ -1,5 +1,5 @@
-const { messageService } = require('../services')
-const { logger } = require('../config')
+const { messageService } = require('@services')
+const { logger } = require('@config')
 
 /**
  * Push pending messages to newly connected user

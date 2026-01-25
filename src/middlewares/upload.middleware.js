@@ -1,7 +1,8 @@
 const multer = require('multer')
 const path = require('path')
-const { errors } = require('../utils')
-const { VALIDATION } = require('../constants')
+
+const { errors } = require('@utils')
+const { VALIDATION } = require('@constants')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

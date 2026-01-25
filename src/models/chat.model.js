@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { CHAT_TYPES } = require('../constants')
+const { CHAT_TYPES } = require('@constants')
 
 const schema = new mongoose.Schema(
   {

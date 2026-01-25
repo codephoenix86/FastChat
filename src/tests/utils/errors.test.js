@@ -7,8 +7,8 @@ const {
   ConflictError,
   RateLimitError,
   PayloadTooLargeError,
-} = require('../../utils/errors/errors')
-const { HTTP_STATUS } = require('../../constants')
+} = require('@errors/errors')
+const { HTTP_STATUS } = require('@constants')
 
 describe('Error Classes', () => {
   describe('AppError', () => {

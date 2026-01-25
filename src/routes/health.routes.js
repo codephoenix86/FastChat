@@ -1,7 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const { logger, env } = require('../config')
-const { HTTP_STATUS } = require('../constants')
+const { logger, env } = require('@config')
+const { HTTP_STATUS } = require('@constants')
 
 const router = express.Router()
 

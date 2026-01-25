@@ -1,5 +1,5 @@
-const { logger, env } = require('../config')
-const { HTTP_STATUS } = require('../constants')
+const { logger, env } = require('@config')
+const { HTTP_STATUS } = require('@constants')
 
 /**
  * Global error handling middleware

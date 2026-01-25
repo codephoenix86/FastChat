@@ -1,7 +1,7 @@
-const { chatRepository, userRepository } = require('../repositories')
-const { CHAT_TYPES } = require('../constants')
-const { errors } = require('../utils')
-const { logger } = require('../config')
+const { chatRepository, userRepository } = require('@repositories')
+const { CHAT_TYPES } = require('@constants')
+const { errors } = require('@utils')
+const { logger } = require('@config')
 
 const { ValidationError, NotFoundError, AuthorizationError } = errors
 

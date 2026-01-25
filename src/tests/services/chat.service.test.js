@@ -1,11 +1,11 @@
-const chatService = require('../../services/chat.service')
-const { ValidationError, NotFoundError, AuthorizationError } = require('../../utils/errors/errors')
-const { createMockChat, createObjectId } = require('../helpers')
-const { CHAT_TYPES } = require('../../constants')
+const chatService = require('@services/chat.service')
+const { ValidationError, NotFoundError, AuthorizationError } = require('@errors/errors')
+const { createMockChat, createObjectId } = require('@tests/helpers')
+const { CHAT_TYPES } = require('@constants')
 
-jest.mock('../../repositories')
+jest.mock('@repositories')
 
-const { chatRepository, userRepository } = require('../../repositories')
+const { chatRepository, userRepository } = require('@repositories')
 
 describe('ChatService', () => {
   beforeEach(() => {

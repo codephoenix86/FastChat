@@ -1,5 +1,5 @@
-const { jwt } = require('../../utils')
-const { logger, env } = require('../../config')
+const { jwt } = require('@utils')
+const { logger, env } = require('@config')
 
 /**
  * Socket.io authentication middleware

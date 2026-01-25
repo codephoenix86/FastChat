@@ -1,4 +1,4 @@
-const { HTTP_STATUS } = require('../../constants')
+const { HTTP_STATUS } = require('@constants')
 
 /**
  * Base application error class

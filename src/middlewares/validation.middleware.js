@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator')
-const { errors } = require('../utils')
+const { errors } = require('@utils')
 
 /**
  * Validate request based on express-validator rules

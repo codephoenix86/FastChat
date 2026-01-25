@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 
 // Set test environment
 process.env.NODE_ENV = 'test'
-process.env.MONGO_URI = 'mongodb://localhost:27017/fastchat_test'
+process.env.MONGO_URI = 'mongodb+srv://nareshlohar066:m7jgZbIriDcyIFtQ@cluster0.trlfbmy.mongodb.net/fastchat-test'
 process.env.JWT_SECRET = 'test_jwt_secret_minimum_32_characters_long_here_for_testing'
 process.env.JWT_REFRESH_SECRET = 'test_refresh_secret_minimum_32_characters_long_here_for_testing'
 process.env.JWT_ACCESS_EXPIRES = '15m'
@@ -16,7 +16,7 @@ process.env.MAX_FILE_SIZE = '5242880'
 jest.setTimeout(10000)
 
 // Mock logger to reduce console output during tests
-jest.mock('../config/logger', () => ({
+jest.mock('@config/logger', () => ({
   info: jest.fn(),
   error: jest.fn(),
   warn: jest.fn(),

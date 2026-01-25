@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
-const logger = require('./logger')
-const env = require('./env')
+const logger = require('@config/logger')
+const env = require('@config/env')
 
 // Mongoose connection events:
 // https://mongoosejs.com/docs/connections.html#connection-events
@@ -19,8 +19,7 @@ mongoose.connection.on('reconnected', () => {
   logger.info('Database reconnected')
 })
 
-const connectDB = async (retries = 5) => {
-  const dbUri = env.MONGO_URI
+const connectDB = async (dbUri = env.MONGO_URI, retries = 5) => {
 
   try {
     await mongoose.connect(dbUri, {

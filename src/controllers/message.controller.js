@@ -1,7 +1,7 @@
-const { messageService } = require('../services')
-const { ApiResponse, pagination } = require('../utils')
-const { HTTP_STATUS } = require('../constants')
-const { socketServer, SOCKET_EVENTS } = require('../sockets')
+const { messageService } = require('@services')
+const { ApiResponse, pagination } = require('@utils')
+const { HTTP_STATUS } = require('@constants')
+const { socketServer, SOCKET_EVENTS } = require('@sockets')
 
 exports.sendMessage = async (req, res) => {
   const { content } = req.body

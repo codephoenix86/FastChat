@@ -1,5 +1,5 @@
-const asyncHandler = require('../../utils/helpers/asyncHandler')
-const { mockRequest, mockResponse, mockNext } = require('../helpers')
+const asyncHandler = require('@helpers/asyncHandler')
+const { mockRequest, mockResponse, mockNext } = require('@tests/helpers')
 
 describe('AsyncHandler', () => {
   it('should call async function successfully', async () => {

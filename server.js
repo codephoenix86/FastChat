@@ -1,8 +1,9 @@
+require('module-alias/register')
 const http = require('http')
 
-const app = require('./src/app')
-const { logger, env, db: { connectDB, disconnectDB } } = require('./src/config')
-const { socketServer } = require('./src/sockets')
+const app = require('@/app')
+const { logger, env, db: { connectDB, disconnectDB } } = require('@config')
+const { socketServer } = require('@sockets')
 
 const server = http.createServer(app)
 const io = socketServer.init(server)

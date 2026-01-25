@@ -3,19 +3,19 @@ jest.mock('bcrypt', () => ({
   compare: jest.fn(),
   hash: jest.fn(),
 }))
-jest.mock('../../repositories')
+jest.mock('@repositories')
 jest.mock('fs', () => ({
   promises: {
     unlink: jest.fn(),
   },
 }))
 
-const userService = require('../../services/user.service')
-const { NotFoundError, ConflictError, AuthError } = require('../../utils/errors/errors')
-const { createMockUser, createObjectId } = require('../helpers')
-const bcrypt = require('bcrypt')
-const { userRepository } = require('../../repositories')
 const fs = require('fs').promises
+const bcrypt = require('bcrypt')
+const userService = require('@services/user.service')
+const { NotFoundError, ConflictError, AuthError } = require('@errors/errors')
+const { createMockUser, createObjectId } = require('@tests/helpers')
+const { userRepository } = require('@repositories')
 
 describe('UserService', () => {
   beforeEach(() => {

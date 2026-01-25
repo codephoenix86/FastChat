@@ -1,12 +1,12 @@
-const authService = require('../../services/auth.service')
-const { ConflictError, AuthError } = require('../../utils/errors/errors')
-const { createMockUser, createObjectId } = require('../helpers')
+const authService = require('@services/auth.service')
+const { ConflictError, AuthError } = require('@errors/errors')
+const { createMockUser, createObjectId } = require('@tests/helpers')
 
-jest.mock('../../repositories')
-jest.mock('../../services/auth/credentials')
+jest.mock('@repositories')
+jest.mock('@services/auth/credentials')
 
-const { userRepository, refreshTokenRepository } = require('../../repositories')
-const { verifyCredentials } = require('../../services/auth/credentials')
+const { userRepository, refreshTokenRepository } = require('@repositories')
+const { verifyCredentials } = require('@services/auth/credentials')
 
 describe('AuthService', () => {
   beforeEach(() => {

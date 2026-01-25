@@ -1,6 +1,6 @@
-const { errors, jwt } = require('../utils')
-const { refreshTokenRepository } = require('../repositories')
-const { env } = require('../config')
+const { errors, jwt } = require('@utils')
+const { refreshTokenRepository } = require('@repositories')
+const { env } = require('@config')
 
 /**
  * Verify access token middleware

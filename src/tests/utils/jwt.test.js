@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
-const { generateTokens, verifyToken } = require('../../utils/auth/jwt')
-const { AuthError } = require('../../utils/errors/errors')
-const { env } = require('../../config')
+const { generateTokens, verifyToken } = require('@auth/jwt')
+const { AuthError } = require('@errors/errors')
+const { env } = require('@config')
 
 describe('JWT Utilities', () => {
   describe('generateTokens', () => {

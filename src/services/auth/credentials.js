@@ -1,7 +1,7 @@
-const { userRepository } = require('../../repositories')
-const { errors } = require('../../utils')
 const bcrypt = require('bcrypt')
-const { logger } = require('../../config')
+const { userRepository } = require('@repositories')
+const { errors } = require('@utils')
+const { logger } = require('@config')
 
 const { AuthError } = errors
 

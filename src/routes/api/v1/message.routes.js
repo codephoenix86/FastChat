@@ -1,7 +1,8 @@
 const express = require('express')
-const { messageControllers } = require('../../../controllers')
-const { asyncHandler } = require('../../../utils')
-const { auth, validators, validate, param } = require('../../../middlewares')
+
+const { messageControllers } = require('@controllers')
+const { asyncHandler } = require('@utils')
+const { auth, validators, validate, param } = require('@middlewares')
 
 const router = express.Router({ mergeParams: true })
 

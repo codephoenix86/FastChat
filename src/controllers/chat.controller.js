@@ -1,6 +1,6 @@
-const { chatService } = require('../services')
-const { ApiResponse, pagination } = require('../utils')
-const { HTTP_STATUS } = require('../constants')
+const { chatService } = require('@services')
+const { ApiResponse, pagination } = require('@utils')
+const { HTTP_STATUS } = require('@constants')
 
 exports.createChat = async (req, res) => {
   const { participants, type, groupName } = req.body
