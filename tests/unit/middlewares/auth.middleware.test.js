@@ -1,5 +1,5 @@
 const { accessToken, refreshToken } = require('@middlewares/auth.middleware')
-const { mockRequest, mockResponse, mockNext, createObjectId } = require('@tests/helpers')
+const { mockRequest, mockResponse, mockNext, createObjectId } = require('@tests/unit/helpers')
 const { ValidationError, AuthError } = require('@errors/errors')
 const { generateTokens } = require('@auth/jwt')
 

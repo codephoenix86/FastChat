@@ -14,7 +14,7 @@ const fs = require('fs').promises
 const bcrypt = require('bcrypt')
 const userService = require('@services/user.service')
 const { NotFoundError, ConflictError, AuthError } = require('@errors/errors')
-const { createMockUser, createObjectId } = require('@tests/helpers')
+const { createMockUser, createObjectId } = require('@tests/unit/helpers')
 const { userRepository } = require('@repositories')
 
 describe('UserService', () => {
@@ -255,9 +255,9 @@ describe('UserService', () => {
       userRepository.findByIdWithPassword.mockResolvedValue(mockUser)
       bcrypt.compare.mockResolvedValue(false)
 
-      await expect(
-        userService.changePassword(mockUser._id, 'wrong', 'new')
-      ).rejects.toThrow(AuthError)
+      await expect(userService.changePassword(mockUser._id, 'wrong', 'new')).rejects.toThrow(
+        AuthError
+      )
     })
   })
 })

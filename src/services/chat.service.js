@@ -191,7 +191,7 @@ class ChatService {
       throw new AuthorizationError('Only admin can remove other members')
     }
 
-    // Admin cannot be removed unless transferring ownership
+    // Admin cannot be removed unless they're the last member OR transferring ownership
     if (chat.admin && chat.admin.toString() === memberIdToRemove && chat.participants.length > 1) {
       throw new AuthorizationError('Admin must transfer ownership before leaving')
     }
@@ -204,7 +204,7 @@ class ChatService {
       $pull: { participants: memberIdToRemove },
     })
 
-    // Delete chat if empty
+    // Delete chat if empty (last member left)
     if (chat.participants.length === 1) {
       await chatRepository.findByIdAndDelete(chatId)
       logger.info('Empty group deleted', { chatId })

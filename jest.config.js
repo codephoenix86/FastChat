@@ -1,6 +1,10 @@
 module.exports = {
   testEnvironment: 'node',
   coverageDirectory: 'coverage',
+
+  // Enable parallel test execution
+  maxWorkers: '50%', // Use 50% of available CPU cores
+
   moduleNameMapper: {
     // root aliases
     '^@$': '<rootDir>/src',
@@ -62,6 +66,7 @@ module.exports = {
     '^@response$': '<rootDir>/src/utils/response',
     '^@response/(.*)$': '<rootDir>/src/utils/response/$1',
   },
+
   collectCoverageFrom: [
     'src/**/*.js',
     '!src/docs/**',
@@ -78,13 +83,18 @@ module.exports = {
     '!src/sockets/handlers/index.js',
     '!src/utils/index.js',
   ],
+
   testMatch: ['**/tests/**/*.test.js'],
   verbose: true,
-  testTimeout: 10000,
+  testTimeout: 30000, // Increased for in-memory DB
+
+  // Better cleanup between tests
   clearMocks: true,
   resetMocks: true,
   restoreMocks: true,
+
   setupFilesAfterEnv: ['<rootDir>/src/tests/setup.js'],
+
   coverageThreshold: {
     global: {
       branches: 70,
@@ -92,5 +102,10 @@ module.exports = {
       lines: 70,
       statements: 70,
     },
+  },
+
+  // Isolation between test files
+  testEnvironmentOptions: {
+    NODE_ENV: 'test',
   },
 }

@@ -1,10 +1,11 @@
 const asyncHandler = require('@helpers/asyncHandler')
-const { mockRequest, mockResponse, mockNext } = require('@tests/helpers')
+const { mockRequest, mockResponse, mockNext } = require('@tests/unit/helpers')
 
 describe('AsyncHandler', () => {
   it('should call async function successfully', async () => {
-    const asyncFn = jest.fn(async (req, res) => {
+    const asyncFn = jest.fn((req, res) => {
       res.json({ success: true })
+      return Promise.resolve()
     })
 
     const req = mockRequest()
@@ -21,9 +22,8 @@ describe('AsyncHandler', () => {
 
   it('should catch errors and pass to next', async () => {
     const error = new Error('Test error')
-    const asyncFn = jest.fn(async () => {
-      throw error
-    })
+
+    const asyncFn = jest.fn(() => Promise.reject(error))
 
     const req = mockRequest()
     const res = mockResponse()
@@ -71,10 +71,11 @@ describe('AsyncHandler', () => {
   })
 
   it('should pass all arguments to wrapped function', async () => {
-    const asyncFn = jest.fn(async (req, res, next) => {
+    const asyncFn = jest.fn((req, res, next) => {
       expect(req).toBeDefined()
       expect(res).toBeDefined()
       expect(next).toBeDefined()
+      return Promise.resolve()
     })
 
     const req = mockRequest()

@@ -1,6 +1,6 @@
 const { validateId } = require('@middlewares/param.middleware')
 const { ValidationError } = require('@errors/errors')
-const { mockRequest, mockResponse, mockNext, createObjectId } = require('@tests/helpers')
+const { mockRequest, mockResponse, mockNext, createObjectId } = require('@tests/unit/helpers')
 
 describe('Param Middleware', () => {
   describe('validateId', () => {
@@ -90,7 +90,7 @@ describe('Param Middleware', () => {
 
       try {
         middleware(req, res, next, 'invalid')
-      } catch (error) {
+      } catch (_err) {
         expect(next).not.toHaveBeenCalled()
       }
     })

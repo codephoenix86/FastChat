@@ -10,6 +10,7 @@ const schema = new mongoose.Schema(
       match: VALIDATION.USERNAME.REGEX,
       required: true,
       trim: true,
+      unique: true,
       minlength: VALIDATION.USERNAME.MIN_LENGTH,
       maxlength: VALIDATION.USERNAME.MAX_LENGTH,
     },
@@ -23,6 +24,7 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
       lowercase: true,
     },
     role: {
@@ -44,8 +46,6 @@ const schema = new mongoose.Schema(
 )
 
 // Indexes for performance
-schema.index({ email: 1 })
-schema.index({ username: 1 })
 schema.index({ lastSeen: -1 })
 
 // JSON transformation
@@ -61,7 +61,9 @@ schema.set('toJSON', {
 
 // Hash password before save
 schema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
+  if (!this.isModified('password')) {
+    return next()
+  }
   this.password = await bcrypt.hash(this.password, 10)
   next()
 })
@@ -71,12 +73,17 @@ schema.pre(['findOneAndUpdate', 'updateOne', 'updateMany'], async function (next
   const update = this.getUpdate()
   const newPassword = update.password || update.$set?.password
 
-  if (!newPassword) return next()
+  if (!newPassword) {
+    return next()
+  }
 
   const hashed = await bcrypt.hash(newPassword, 10)
-  if (update.$set) update.$set.password = hashed
-  else update.password = hashed
-  
+  if (update.$set) {
+    update.$set.password = hashed
+  } else {
+    update.password = hashed
+  }
+
   next()
 })
 
