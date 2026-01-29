@@ -1,6 +1,6 @@
 const chatService = require('@services/chat.service')
 const { ValidationError, NotFoundError, AuthorizationError } = require('@errors/errors')
-const { createMockChat, createObjectId } = require('@tests/helpers')
+const { createMockChat, createObjectId } = require('@tests/unit/helpers')
 const { CHAT_TYPES } = require('@constants')
 
 jest.mock('@repositories')
@@ -156,9 +156,7 @@ describe('ChatService', () => {
     it('should throw NotFoundError when chat does not exist', async () => {
       chatRepository.findByIdWithPopulate.mockResolvedValue(null)
 
-      await expect(chatService.getChatById('nonexistent', 'userId')).rejects.toThrow(
-        NotFoundError
-      )
+      await expect(chatService.getChatById('nonexistent', 'userId')).rejects.toThrow(NotFoundError)
     })
 
     it('should throw AuthorizationError when user is not a participant', async () => {
@@ -200,9 +198,7 @@ describe('ChatService', () => {
       const mockChat = createMockChat({ type: CHAT_TYPES.PRIVATE })
       chatRepository.findById.mockResolvedValue(mockChat)
 
-      await expect(chatService.updateChat('chatId', 'userId', {})).rejects.toThrow(
-        ValidationError
-      )
+      await expect(chatService.updateChat('chatId', 'userId', {})).rejects.toThrow(ValidationError)
     })
 
     it('should throw AuthorizationError when non-admin tries to update', async () => {

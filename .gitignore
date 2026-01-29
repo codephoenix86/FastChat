@@ -35,8 +35,5 @@ coverage/
 dist/
 build/
 
-# Prettier
-.prettierrc
-
 # Nodemon
 nodemon.json

@@ -1,48 +1,28 @@
 # fastchat - Real-Time Chat Application
 
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/mongodb-%3E%3D6.0-green)](https://www.mongodb.com/)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+
 A production-ready real-time chat application built with Node.js, Express, MongoDB, and Socket.io following REST best practices and clean architecture principles.
 
 ## Features
 
-### Core Functionality
-- **JWT Authentication**: Access/refresh token system with automatic token rotation
-- **User Management**: Complete CRUD operations with profile customization and avatar support
-- **Chat System**: Private and group chats with full management capabilities
-- **Real-Time Messaging**: Instant messaging with delivery/read receipts and typing indicators
-- **Message Operations**: Send, edit, delete messages with pagination support
-
-### Production-Ready Features
-- Structured logging with Winston (daily rotation)
-- Input sanitization and XSS protection
-- Security headers with Helmet
-- Graceful shutdown handling
-- Health check endpoint
-- Environment validation
-- Comprehensive error handling
-- Request tracking with unique IDs
-- Advanced pagination, filtering, and sorting
-
-## Tech Stack
-
-- **Runtime**: Node.js >= 18.0.0
-- **Framework**: Express 5.x
-- **Database**: MongoDB >= 6.0
-- **Real-time**: Socket.io 4.x
-- **Authentication**: JWT with bcrypt
-- **Validation**: express-validator
-- **Logging**: Winston with daily rotation
-
-## Documentation
-
-- **[API Documentation](./src/docs/API_DOCUMENTATION.md)** - Complete REST API reference with all endpoints
-- **[Architecture](./src/docs/ARCHITECTURE.md)** - System architecture and design diagrams
+- 🔐 **JWT Authentication** - Access/refresh token system with automatic rotation
+- 👥 **User Management** - Complete CRUD operations with profile customization
+- 💬 **Real-Time Messaging** - Instant messaging with delivery/read receipts
+- 🔔 **Typing Indicators** - Real-time typing status updates
+- 👤 **Avatar Support** - User profile pictures with file upload
+- 🔍 **Advanced Queries** - Pagination, filtering, and sorting on all endpoints
+- 📊 **Online Status** - Track user presence with last seen timestamps
+- 🔒 **Security** - XSS protection, input sanitization, and security headers
+- 📝 **Comprehensive Logging** - Structured logging with daily rotation
+- ✅ **Full Test Coverage** - Unit and integration tests with 70%+ coverage
 
 ## Quick Start
 
 ```bash
-# Clone and install
-git clone https://github.com/codephoenix86/fastchat.git
-cd fastchat
+# Install dependencies
 npm install
 
 # Configure environment
@@ -55,33 +35,84 @@ mkdir -p logs uploads/public/avatars uploads/private
 # Start development server
 npm run dev
 
-# Start production server
-npm start
+# Run tests
+npm test
 ```
+
+## Documentation
+
+- **[Quick Start Guide](docs/QUICKSTART.md)** - Get up and running in 5 minutes
+- **[REST API Reference](docs/API_REST.md)** - Complete HTTP endpoint documentation
+- **[WebSocket API](docs/API_WEBSOCKET.md)** - Socket.io events and real-time features
+- **[Architecture Overview](docs/ARCHITECTURE.md)** - System design and patterns
+- **[Testing Guide](docs/TESTING.md)** - Testing strategy and best practices
+
+## Tech Stack
+
+**Backend:** Node.js 18+, Express 5.x  
+**Database:** MongoDB 6.0+  
+**Real-time:** Socket.io 4.x  
+**Authentication:** JWT with bcrypt  
+**Testing:** Jest with Supertest  
+**Logging:** Winston with daily rotation
 
 ## Environment Configuration
 
-```env
-NODE_ENV=development
-PORT=3000
-MONGO_URI=mongodb://localhost:27017/fastchat
+| Variable             | Description                         | Default       |
+| -------------------- | ----------------------------------- | ------------- |
+| `NODE_ENV`           | Environment mode                    | `development` |
+| `PORT`               | Server port                         | `3000`        |
+| `MONGO_URI`          | MongoDB connection string           | Required      |
+| `JWT_SECRET`         | JWT secret (min 32 chars)           | Required      |
+| `JWT_REFRESH_SECRET` | Refresh token secret (min 32 chars) | Required      |
 
-# JWT Secrets (minimum 32 characters)
-JWT_SECRET=your_jwt_secret_minimum_32_characters_long_here
-JWT_REFRESH_SECRET=your_refresh_secret_minimum_32_characters_long_here
+See [.env.example](.env.example) for complete configuration.
 
-# Token expiration
-JWT_ACCESS_EXPIRES=15m
-JWT_REFRESH_EXPIRES=7d
+## API Overview
 
-# CORS
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+```bash
+# Health check
+GET /health
 
-# Logging
-LOG_LEVEL=info
+# Authentication
+POST /api/v1/auth/signup
+POST /api/v1/auth/login
+POST /api/v1/auth/logout
+POST /api/v1/auth/refresh-token
 
-# File upload
-MAX_FILE_SIZE=5242880
+# Users
+GET    /api/v1/users
+GET    /api/v1/users/:id
+GET    /api/v1/users/me
+PATCH  /api/v1/users/me
+DELETE /api/v1/users/me
+
+# Chats
+GET    /api/v1/chats
+POST   /api/v1/chats
+GET    /api/v1/chats/:chatId
+PATCH  /api/v1/chats/:chatId
+DELETE /api/v1/chats/:chatId
+
+# Messages
+GET    /api/v1/chats/:chatId/messages
+POST   /api/v1/chats/:chatId/messages
+GET    /api/v1/chats/:chatId/messages/:messageId
+PATCH  /api/v1/chats/:chatId/messages/:messageId
+DELETE /api/v1/chats/:chatId/messages/:messageId
+```
+
+See [REST API Reference](docs/API_REST.md) for detailed documentation.
+
+## Scripts
+
+```bash
+npm start              # Production server
+npm run dev            # Development with nodemon
+npm test               # Run all tests with coverage
+npm run test:watch     # Run tests in watch mode
+npm run test:unit      # Run unit tests only
+npm run test:integration # Run integration tests only
 ```
 
 ## Project Structure
@@ -89,116 +120,20 @@ MAX_FILE_SIZE=5242880
 ```
 fastchat/
 ├── src/
-│   ├── config/          # Database, logger, environment validation
-│   ├── constants/       # Application constants
+│   ├── config/          # Configuration and setup
 │   ├── controllers/     # Request handlers
 │   ├── middlewares/     # Express middleware
-│   │   └── validators/  # Input validation rules
 │   ├── models/          # Mongoose schemas
 │   ├── repositories/    # Data access layer
 │   ├── routes/          # API routes
-│   │   └── v1/          # Version 1 routes
 │   ├── services/        # Business logic
 │   ├── sockets/         # Socket.io implementation
-│   │   ├── handlers/    # Socket event handlers
-│   │   ├── middlewares/ # Socket middleware
-│   │   └── services/    # Socket services
-│   ├── utils/           # Helper functions
-│   └── app.js           # Express configuration
+│   └── utils/           # Helper functions
+├── tests/               # Test suites
 ├── uploads/             # User-uploaded files
 ├── logs/                # Application logs
-├── docs/                # Documentation
-└── server.js            # Application entry point
+└── docs/                # Documentation
 ```
-
-## Key Features Explained
-
-### Authentication Flow
-- JWT-based authentication with access and refresh tokens
-- Access tokens expire in 15 minutes, refresh tokens in 7 days
-- Token rotation on refresh for enhanced security
-- Secure password hashing with bcrypt
-
-### Real-Time Communication
-- Socket.io for bidirectional communication
-- Online/offline status tracking
-- Message delivery and read receipts
-- Typing indicators
-- Automatic reconnection handling
-
-### Data Management
-- Repository pattern for database operations
-- Service layer for business logic
-- Comprehensive input validation
-- XSS protection and sanitization
-- Pagination, filtering, and sorting on all list endpoints
-
-### Logging & Monitoring
-- Structured JSON logging with Winston
-- Daily log rotation (14-day retention)
-- Separate error and combined logs
-- Request tracking with unique IDs
-- Health check endpoint for monitoring
-
-## Health Check
-
-```bash
-curl http://localhost:3000/health
-```
-
-**Response:**
-```json
-{
-  "uptime": 123.456,
-  "timestamp": 1705838400000,
-  "status": "OK",
-  "environment": "development",
-  "version": "1.0.0",
-  "checks": {
-    "database": "connected"
-  }
-}
-```
-
-## Security Features
-
-- Helmet.js for security headers
-- CORS configuration
-- JWT token-based authentication
-- Input sanitization against XSS
-- Password strength validation
-- MongoDB injection protection
-- Rate limiting ready (extensible)
-
-## API Response Format
-
-All API endpoints return responses in a standardized format:
-
-**Success Response:**
-```json
-{
-  "success": true,
-  "message": "Operation successful",
-  "data": {},
-  "timestamp": "2024-01-21T10:30:00.000Z"
-}
-```
-
-**Error Response:**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Error description",
-    "details": []
-  },
-  "timestamp": "2024-01-21T10:30:00.000Z",
-  "requestId": "uuid"
-}
-```
-
-For detailed API documentation, see [API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md).
 
 ## License
 
@@ -212,6 +147,7 @@ Naresh Lohar
 
 https://github.com/codephoenix86/fastchat
 
-## Contributing
+## Support
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- 📖 [Documentation](docs/)
+- 🐛 [Report Issues](https://github.com/codephoenix86/fastchat/issues)

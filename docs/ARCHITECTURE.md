@@ -1,6 +1,6 @@
 # Architecture Documentation
 
-This document provides an overview of the fastchat application architecture, design patterns, and system components.
+System architecture, design patterns, and technical implementation details for fastchat.
 
 ## Table of Contents
 
@@ -92,35 +92,41 @@ The application follows a layered architecture with clear separation of concerns
 ### Key Components
 
 #### 1. Express Application Layer
+
 - **Middleware Stack**: Handles security, parsing, validation, and authentication
 - **Routes**: RESTful API endpoints organized by resource
 - **Error Handling**: Centralized error handling with custom error types
 
 #### 2. Socket.io Server
+
 - **Real-time Communication**: Bidirectional event-based communication
 - **Authentication**: JWT-based socket authentication
 - **Room Management**: Chat room joining/leaving functionality
 - **Online Status Tracking**: Manages user online/offline states
 
 #### 3. Controllers
+
 - Handle HTTP requests and responses
 - Extract and validate request data
 - Call appropriate service methods
 - Format responses using ApiResponse utility
 
 #### 4. Services (Business Logic Layer)
+
 - Implement core business logic
 - Enforce business rules and validations
 - Orchestrate repository calls
 - Handle complex operations
 
 #### 5. Repositories (Data Access Layer)
+
 - Abstract database operations
 - Provide clean interfaces for data access
 - Handle Mongoose queries and model operations
 - Ensure data consistency
 
 #### 6. MongoDB Database
+
 - Document-based storage
 - Collections: Users, Chats, Messages, RefreshTokens
 - Indexed for performance optimization
@@ -274,6 +280,7 @@ WebSocket connection lifecycle and event management:
 ### Socket Event Flow
 
 #### User Joins a Chat
+
 ```
 Client                    Server                    Other Clients
   │                         │                         │
@@ -286,6 +293,7 @@ Client                    Server                    Other Clients
 ```
 
 #### Sending a Message
+
 ```
 Client                    Server                    Other Clients
   │                         │                         │
@@ -300,6 +308,7 @@ Client                    Server                    Other Clients
 ```
 
 #### Online Status Updates
+
 ```
 User A                    Server                    User B
   │                         │                         │
@@ -324,6 +333,7 @@ In-memory service tracking connected users:
 ```
 
 **Features:**
+
 - Tracks multiple concurrent connections per user
 - Efficient Set data structure for socket management
 - First connection triggers `user:online` broadcast
@@ -397,6 +407,7 @@ Entity relationships and data model:
 ### Collections
 
 #### Users
+
 ```javascript
 {
   _id: ObjectId,
@@ -413,6 +424,7 @@ Entity relationships and data model:
 ```
 
 #### Chats
+
 ```javascript
 {
   _id: ObjectId,
@@ -427,11 +439,13 @@ Entity relationships and data model:
 ```
 
 **Indexes:**
+
 - `{ participants: 1, createdAt: -1 }`
 - `{ participants: 1, type: 1 }`
 - `{ admin: 1 }`
 
 #### Messages
+
 ```javascript
 {
   _id: ObjectId,
@@ -451,11 +465,13 @@ Entity relationships and data model:
 ```
 
 **Indexes:**
+
 - `{ chat: 1, createdAt: -1 }`
 - `{ sender: 1, createdAt: -1 }`
 - `{ status: 1, chat: 1 }`
 
 #### RefreshTokens
+
 ```javascript
 {
   _id: ObjectId,
@@ -466,6 +482,7 @@ Entity relationships and data model:
 ```
 
 **Indexes:**
+
 - `{ user: 1, refreshToken: 1 }`
 - TTL index on `createdAt` (expires after JWT_REFRESH_EXPIRES)
 
@@ -474,6 +491,7 @@ Entity relationships and data model:
 ## Design Patterns
 
 ### 1. Repository Pattern
+
 Abstracts data access logic from business logic.
 
 ```
@@ -487,12 +505,14 @@ Service Layer          Repository Layer        Database
 ```
 
 **Benefits:**
+
 - Centralized data access logic
 - Easy to test (can mock repositories)
 - Consistent query patterns
 - Decouples business logic from database implementation
 
 ### 2. Service Layer Pattern
+
 Encapsulates business logic and orchestrates operations.
 
 ```
@@ -505,12 +525,14 @@ Controller ──► Service ──► Repository ──► Database
 ```
 
 **Benefits:**
+
 - Reusable business logic
 - Single responsibility
 - Easier to unit test
 - Clear separation of concerns
 
 ### 3. Middleware Chain Pattern
+
 Sequential processing of requests through middleware functions.
 
 ```
@@ -536,6 +558,7 @@ Request
 ```
 
 ### 4. Error Handling Pattern
+
 Centralized error handling with custom error types.
 
 ```javascript
@@ -557,6 +580,7 @@ app.use((err, req, res, next) => {
 ```
 
 **Error Flow:**
+
 ```
 Service throws error
        │
@@ -571,6 +595,7 @@ Formatted JSON response
 ```
 
 ### 5. Singleton Pattern
+
 Used for shared services and resources.
 
 ```javascript
@@ -579,12 +604,12 @@ class SocketServer {
   constructor() {
     this.io = null
   }
-  
+
   init(server) {
     this.io = new Server(server)
     return this.io
   }
-  
+
   get() {
     if (!this.io) throw new Error('Socket not initialized')
     return this.io
@@ -595,12 +620,14 @@ module.exports = new SocketServer()
 ```
 
 **Examples in codebase:**
+
 - `socketServer` (Socket.io instance)
 - `onlineUsersService` (Online user tracking)
 - Repository instances
 - Service instances
 
 ### 6. Factory Pattern
+
 Used for creating consistent response objects.
 
 ```javascript
@@ -616,127 +643,28 @@ class ApiResponse {
 
 ---
 
-## Security Architecture
+## Project Structure
 
-### Authentication Flow
 ```
-1. User Login
-   ├─► Credentials sent to /auth/login
-   ├─► Server validates credentials (bcrypt)
-   ├─► Generate access token (15min expiry)
-   ├─► Generate refresh token (7d expiry)
-   ├─► Store refresh token in DB
-   └─► Return both tokens to client
-
-2. API Request
-   ├─► Client sends access token in Authorization header
-   ├─► Auth middleware verifies token
-   ├─► If valid: attach user to req.user
-   └─► If invalid/expired: return 401 error
-
-3. Token Refresh
-   ├─► Client sends refresh token to /auth/refresh-token
-   ├─► Server verifies token and checks DB
-   ├─► Generate new access + refresh tokens
-   ├─► Delete old refresh token from DB
-   ├─► Store new refresh token in DB
-   └─► Return new tokens to client
-
-4. Logout
-   ├─► Client sends refresh token to /auth/logout
-   ├─► Server deletes refresh token from DB
-   └─► Token invalidated
+fastchat/
+├── src/
+│   ├── config/          # Configuration and setup
+│   ├── controllers/     # Request handlers
+│   ├── middlewares/     # Express middleware
+│   ├── models/          # Mongoose schemas
+│   ├── repositories/    # Data access layer
+│   ├── routes/          # API routes
+│   ├── services/        # Business logic
+│   ├── sockets/         # Socket.io implementation
+│   └── utils/           # Helper functions
+├── tests/               # Test suites
+├── uploads/             # User-uploaded files
+├── logs/                # Application logs
+└── docs/                # Documentation
 ```
 
-### Security Layers
-```
-┌──────────────────────────────────────┐
-│         Client Request               │
-└──────────────────────────────────────┘
-                 │
-                 ▼
-┌──────────────────────────────────────┐
-│  Layer 1: Helmet (Security Headers)  │
-│  • CSP, HSTS, X-Frame-Options, etc.  │
-└──────────────────────────────────────┘
-                 │
-                 ▼
-┌──────────────────────────────────────┐
-│  Layer 2: CORS (Origin Validation)   │
-│  • Whitelist allowed origins         │
-└──────────────────────────────────────┘
-                 │
-                 ▼
-┌──────────────────────────────────────┐
-│  Layer 3: XSS Sanitization           │
-│  • Clean user input                  │
-└──────────────────────────────────────┘
-                 │
-                 ▼
-┌──────────────────────────────────────┐
-│  Layer 4: JWT Authentication         │
-│  • Verify token signature            │
-└──────────────────────────────────────┘
-                 │
-                 ▼
-┌──────────────────────────────────────┐
-│  Layer 5: Input Validation           │
-│  • express-validator rules           │
-└──────────────────────────────────────┘
-                 │
-                 ▼
-┌──────────────────────────────────────┐
-│  Layer 6: Business Logic             │
-│  • Authorization checks              │
-│  • Resource ownership                │
-└──────────────────────────────────────┘
-```
+## See Also
 
----
-
-## Performance Considerations
-
-### Database Optimization
-- **Indexes**: Strategic indexes on frequently queried fields
-- **Query Optimization**: Selective field projection, population
-- **Connection Pooling**: Min/max pool size configuration
-
-### Caching Strategy
-- **In-Memory Cache**: OnlineUsersService for real-time status
-- **Static Assets**: Serve uploaded files with proper caching headers
-
-### Scalability Considerations
-- **Stateless API**: JWT-based auth enables horizontal scaling
-- **Socket.io Scaling**: Can add Redis adapter for multi-server Socket.io
-- **Database Replication**: MongoDB replica sets for read scaling
-- **Load Balancing**: Application is load-balancer ready
-
----
-
-## Logging Strategy
-
-### Log Levels
-```
-ERROR   ─► Critical errors, exceptions
-WARN    ─► Warning conditions
-INFO    ─► General information (default)
-DEBUG   ─► Detailed debugging information
-```
-
-### Log Structure
-```javascript
-{
-  level: 'info',
-  message: 'User logged in successfully',
-  timestamp: '2024-01-21T10:30:00.000Z',
-  service: 'fastchat-api',
-  userId: '65a7c9f8e4b0a1234567890a',
-  requestId: 'uuid-here'
-}
-```
-
-### Log Rotation
-- Daily rotation with date-based filenames
-- Separate error and combined logs
-- 14-day retention policy
-- 20MB max file size before rotation
+- [Testing Guide](TESTING.md) - Testing architecture and strategies
+- [REST API Reference](API_REST.md) - Complete API documentation
+- [WebSocket API](API_WEBSOCKET.md) - Real-time communication details

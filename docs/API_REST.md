@@ -1,29 +1,74 @@
-# API Documentation
+# REST API Reference
 
-Complete REST API reference for fastchat application.
+Complete HTTP API documentation for fastchat.
 
-## Table of Contents
+## Base URL
 
-- [Authentication](#authentication)
-- [Users](#users)
-- [Chats](#chats)
-- [Messages](#messages)
-- [Socket.io Events](#socketio-events)
+```
+http://localhost:3000
+```
 
----
+## Response Format
+
+All API endpoints return responses in a standardized format.
+
+### Success Response
+
+```json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {},
+  "timestamp": "2024-01-21T10:30:00.000Z"
+}
+```
+
+### Error Response
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Error description",
+    "details": []
+  },
+  "timestamp": "2024-01-21T10:30:00.000Z",
+  "requestId": "uuid"
+}
+```
+
+### Paginated Response
+
+```json
+{
+  "success": true,
+  "message": "Items fetched successfully",
+  "data": [],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 100,
+    "totalPages": 5,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  },
+  "timestamp": "2024-01-21T10:30:00.000Z"
+}
+```
 
 ## Authentication
 
 ### POST `/api/v1/auth/signup`
+
 Register a new user.
 
-**Headers:**
-```
-Content-Type: application/json
-```
+**Request:**
 
-**Request Body:**
-```json
+```http
+POST /api/v1/auth/signup
+Content-Type: application/json
+
 {
   "username": "alice",
   "email": "alice@example.com",
@@ -32,11 +77,13 @@ Content-Type: application/json
 ```
 
 **Validation Rules:**
+
 - `username`: 3-20 characters, must start with a letter, can contain letters, digits, underscores, and dots
 - `email`: Valid email format
-- `password`: Minimum 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)
+- `password`: Minimum 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%\*?&#)
 
 **Response (201):**
+
 ```json
 {
   "success": true,
@@ -52,29 +99,40 @@ Content-Type: application/json
 }
 ```
 
+**Error Responses:**
+
+- `400` - Validation error
+- `409` - Email or username already exists
+
 ---
 
 ### POST `/api/v1/auth/login`
+
 Authenticate user and receive tokens.
 
-**Headers:**
-```
-Content-Type: application/json
-```
+**Request:**
 
-**Request Body:**
-```json
+```http
+POST /api/v1/auth/login
+Content-Type: application/json
+
 {
-  "username": "alice",  // or "email": "alice@example.com"
+  "username": "alice",
   "password": "Secure@123"
 }
 ```
 
-**Validation Rules:**
-- Either `username` or `email` is required (not both)
-- `password`: Required string
+**Alternative (login with email):**
+
+```json
+{
+  "email": "alice@example.com",
+  "password": "Secure@123"
+}
+```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -92,23 +150,29 @@ Content-Type: application/json
 }
 ```
 
+**Error Responses:**
+
+- `400` - Validation error
+- `401` - Invalid credentials
+
 ---
 
 ### POST `/api/v1/auth/logout`
+
 Logout user and invalidate refresh token.
 
-**Headers:**
-```
+**Request:**
+
+```http
+POST /api/v1/auth/logout
 Authorization: Bearer {accessToken}
 Content-Type: application/x-www-form-urlencoded
-```
 
-**Request Body:**
-```
 refresh_token=jwt_refresh_token
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -116,22 +180,28 @@ refresh_token=jwt_refresh_token
 }
 ```
 
+**Error Responses:**
+
+- `400` - Missing refresh token
+- `401` - Invalid refresh token
+
 ---
 
 ### POST `/api/v1/auth/refresh-token`
+
 Refresh access token using refresh token.
 
-**Headers:**
-```
-Content-Type: application/x-www-form-urlencoded
-```
+**Request:**
 
-**Request Body:**
-```
+```http
+POST /api/v1/auth/refresh-token
+Content-Type: application/x-www-form-urlencoded
+
 refresh_token=jwt_refresh_token
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -143,28 +213,35 @@ refresh_token=jwt_refresh_token
 }
 ```
 
+**Error Responses:**
+
+- `400` - Missing refresh token
+- `401` - Invalid or expired refresh token
+
 ---
 
 ## Users
 
-All user endpoints (except GET `/api/v1/users` and GET `/api/v1/users/:id`) require authentication.
-
 ### GET `/api/v1/users`
+
 Get list of users with pagination and search.
 
+**Request:**
+
+```http
+GET /api/v1/users?page=1&limit=20&search=alice&role=user&sort=-createdAt
+```
+
 **Query Parameters:**
+
 - `page` (optional): Page number, default: 1
 - `limit` (optional): Items per page, default: 20, max: 100
 - `search` (optional): Search in username or email
 - `role` (optional): Filter by role ("user" or "admin")
 - `sort` (optional): Sort fields, e.g., "-createdAt,username" (prefix with "-" for descending)
 
-**Example:**
-```
-GET /api/v1/users?page=1&limit=20&search=alice&sort=-createdAt
-```
-
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -196,9 +273,17 @@ GET /api/v1/users?page=1&limit=20&search=alice&sort=-createdAt
 ---
 
 ### GET `/api/v1/users/:id`
+
 Get user by ID.
 
+**Request:**
+
+```http
+GET /api/v1/users/507f1f77bcf86cd799439011
+```
+
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -219,32 +304,45 @@ Get user by ID.
 }
 ```
 
+**Error Responses:**
+
+- `400` - Invalid user ID
+- `404` - User not found
+
 ---
 
 ### GET `/api/v1/users/me`
+
 Get current authenticated user's profile.
 
-**Headers:**
-```
+**Request:**
+
+```http
+GET /api/v1/users/me
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200):**
-Same as GET `/api/v1/users/:id`
+Same format as GET `/api/v1/users/:id`
+
+**Error Responses:**
+
+- `400` - Missing authorization token
+- `401` - Invalid or expired token
 
 ---
 
 ### PATCH `/api/v1/users/me`
+
 Update current user's profile.
 
-**Headers:**
-```
+**Request:**
+
+```http
+PATCH /api/v1/users/me
 Authorization: Bearer {accessToken}
 Content-Type: application/json
-```
 
-**Request Body:**
-```json
 {
   "newUsername": "newalice",
   "newEmail": "newalice@example.com",
@@ -255,6 +353,7 @@ Content-Type: application/json
 ```
 
 **Validation Rules:**
+
 - `oldPassword`: Required when changing `newEmail` or `newPassword`
 - `newUsername`: 3-20 characters, same format as signup
 - `newPassword`: Minimum 8 characters with complexity requirements
@@ -262,6 +361,7 @@ Content-Type: application/json
 - At least one field (excluding `oldPassword`) must be provided
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -271,23 +371,33 @@ Content-Type: application/json
       "id": "userId",
       "username": "newalice",
       "email": "newalice@example.com",
-      ...
+      "bio": "Updated bio"
     }
   }
 }
 ```
 
+**Error Responses:**
+
+- `400` - Validation error
+- `401` - Invalid old password or token
+- `409` - Email or username already taken
+
 ---
 
 ### DELETE `/api/v1/users/me`
+
 Delete current user's account.
 
-**Headers:**
-```
+**Request:**
+
+```http
+DELETE /api/v1/users/me
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -298,24 +408,26 @@ Authorization: Bearer {accessToken}
 ---
 
 ### POST `/api/v1/users/me/avatar`
+
 Upload user avatar.
 
-**Headers:**
-```
+**Request:**
+
+```http
+POST /api/v1/users/me/avatar
 Authorization: Bearer {accessToken}
 Content-Type: multipart/form-data
-```
 
-**Request Body (Form Data):**
-```
 avatar: [image file]
 ```
 
 **Validation Rules:**
+
 - File types: jpeg, jpg, png, gif only
 - Maximum file size: 5MB
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -323,24 +435,32 @@ avatar: [image file]
   "data": {
     "user": {
       "id": "userId",
-      "avatar": "userId-timestamp.jpg",
-      ...
+      "avatar": "userId-timestamp.jpg"
     }
   }
 }
 ```
 
+**Error Responses:**
+
+- `400` - No file uploaded or invalid file type
+- `413` - File too large
+
 ---
 
 ### DELETE `/api/v1/users/me/avatar`
+
 Remove user avatar.
 
-**Headers:**
-```
+**Request:**
+
+```http
+DELETE /api/v1/users/me/avatar
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -348,8 +468,7 @@ Authorization: Bearer {accessToken}
   "data": {
     "user": {
       "id": "userId",
-      "avatar": null,
-      ...
+      "avatar": null
     }
   }
 }
@@ -358,16 +477,16 @@ Authorization: Bearer {accessToken}
 ---
 
 ### PATCH `/api/v1/users/me/password`
+
 Change user password.
 
-**Headers:**
-```
+**Request:**
+
+```http
+PATCH /api/v1/users/me/password
 Authorization: Bearer {accessToken}
 Content-Type: application/json
-```
 
-**Request Body:**
-```json
 {
   "oldPassword": "Secure@123",
   "newPassword": "NewSecure@456"
@@ -375,16 +494,23 @@ Content-Type: application/json
 ```
 
 **Validation Rules:**
+
 - Both fields required
 - `newPassword`: Minimum 8 characters with complexity requirements
 
 **Response (200):**
+
 ```json
 {
   "success": true,
   "message": "Password changed successfully"
 }
 ```
+
+**Error Responses:**
+
+- `400` - Validation error
+- `401` - Invalid old password
 
 ---
 
@@ -393,25 +519,25 @@ Content-Type: application/json
 All chat endpoints require authentication.
 
 ### GET `/api/v1/chats`
+
 Get user's chats with pagination.
 
-**Headers:**
-```
+**Request:**
+
+```http
+GET /api/v1/chats?page=1&limit=20&type=group&sort=-createdAt
 Authorization: Bearer {accessToken}
 ```
 
 **Query Parameters:**
+
 - `page` (optional): Page number, default: 1
 - `limit` (optional): Items per page, default: 20, max: 100
 - `type` (optional): Filter by type ("private" or "group")
 - `sort` (optional): Sort fields, e.g., "-createdAt"
 
-**Example:**
-```
-GET /api/v1/chats?page=1&limit=20&type=group&sort=-createdAt
-```
-
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -448,15 +574,24 @@ GET /api/v1/chats?page=1&limit=20&type=group&sort=-createdAt
 ---
 
 ### POST `/api/v1/chats`
+
 Create a new chat.
 
-**Headers:**
-```
+**Request (Private Chat):**
+
+```http
+POST /api/v1/chats
 Authorization: Bearer {accessToken}
 Content-Type: application/json
+
+{
+  "type": "private",
+  "participants": ["userId2"]
+}
 ```
 
-**Request Body:**
+**Request (Group Chat):**
+
 ```json
 {
   "type": "group",
@@ -466,6 +601,7 @@ Content-Type: application/json
 ```
 
 **Validation Rules:**
+
 - `type`: Must be "private" or "group"
 - `groupName`: Required for group chats, 1-50 characters
 - `participants`: Array of user IDs
@@ -474,6 +610,7 @@ Content-Type: application/json
 - All participant IDs must be valid MongoDB ObjectIds and exist in database
 
 **Response (201):**
+
 ```json
 {
   "success": true,
@@ -483,7 +620,6 @@ Content-Type: application/json
       "id": "chatId",
       "type": "group",
       "name": "Team Chat",
-      "picture": null,
       "admin": "creatorUserId",
       "participants": ["userId1", "userId2", "creatorUserId"],
       "createdAt": "2024-01-21T10:30:00.000Z",
@@ -493,17 +629,26 @@ Content-Type: application/json
 }
 ```
 
+**Error Responses:**
+
+- `400` - Validation error (invalid participants, missing group name, etc.)
+- `401` - Unauthorized
+
 ---
 
 ### GET `/api/v1/chats/:chatId`
+
 Get chat details by ID.
 
-**Headers:**
-```
+**Request:**
+
+```http
+GET /api/v1/chats/507f1f77bcf86cd799439011
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -513,7 +658,6 @@ Authorization: Bearer {accessToken}
       "id": "chatId",
       "type": "group",
       "name": "Team Chat",
-      "picture": null,
       "admin": {
         "id": "userId",
         "username": "alice",
@@ -534,19 +678,25 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Error Responses:**
+
+- `400` - Invalid chat ID
+- `403` - User is not a participant
+- `404` - Chat not found
+
 ---
 
 ### PATCH `/api/v1/chats/:chatId`
+
 Update chat details (group chats only, admin only).
 
-**Headers:**
-```
+**Request:**
+
+```http
+PATCH /api/v1/chats/507f1f77bcf86cd799439011
 Authorization: Bearer {accessToken}
 Content-Type: application/json
-```
 
-**Request Body:**
-```json
 {
   "groupName": "New Team Chat",
   "groupPicture": "picture_url",
@@ -555,6 +705,7 @@ Content-Type: application/json
 ```
 
 **Validation Rules:**
+
 - Only works for group chats
 - Only admin can update
 - At least one field must be provided
@@ -562,6 +713,7 @@ Content-Type: application/json
 - `admin`: Must be a valid participant ID
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -569,28 +721,38 @@ Content-Type: application/json
   "data": {
     "chat": {
       "id": "chatId",
-      "name": "New Team Chat",
-      ...
+      "name": "New Team Chat"
     }
   }
 }
 ```
 
+**Error Responses:**
+
+- `400` - Validation error (private chat, no fields provided, etc.)
+- `403` - User is not admin
+- `404` - Chat not found
+
 ---
 
 ### DELETE `/api/v1/chats/:chatId`
+
 Delete chat (group chats only, admin only).
 
-**Headers:**
-```
+**Request:**
+
+```http
+DELETE /api/v1/chats/507f1f77bcf86cd799439011
 Authorization: Bearer {accessToken}
 ```
 
 **Validation Rules:**
+
 - Only works for group chats
 - Only admin can delete
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -598,17 +760,27 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Error Responses:**
+
+- `400` - Cannot delete private chat
+- `403` - User is not admin
+- `404` - Chat not found
+
 ---
 
 ### GET `/api/v1/chats/:chatId/members`
+
 Get chat members.
 
-**Headers:**
-```
+**Request:**
+
+```http
+GET /api/v1/chats/507f1f77bcf86cd799439011/members
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -630,28 +802,30 @@ Authorization: Bearer {accessToken}
 ---
 
 ### POST `/api/v1/chats/:chatId/members`
+
 Add member to group chat.
 
-**Headers:**
-```
+**Request:**
+
+```http
+POST /api/v1/chats/507f1f77bcf86cd799439011/members
 Authorization: Bearer {accessToken}
 Content-Type: application/json
-```
 
-**Request Body:**
-```json
 {
   "userId": "userIdToAdd"
 }
 ```
 
 **Validation Rules:**
+
 - Only works for group chats
 - Only admin can add members (or user can add themselves)
 - User must not already be a member
 - Must be a valid user ID
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -659,30 +833,53 @@ Content-Type: application/json
 }
 ```
 
+**Error Responses:**
+
+- `400` - User already a member or invalid user ID
+- `403` - Not authorized to add members
+- `404` - Chat or user not found
+
 ---
 
 ### DELETE `/api/v1/chats/:chatId/members/:userId`
+
 Remove member from group chat.
 
-**Headers:**
-```
+**Request:**
+
+```http
+DELETE /api/v1/chats/507f1f77bcf86cd799439011/members/me
 Authorization: Bearer {accessToken}
 ```
 
+Or to remove another user:
+
+```http
+DELETE /api/v1/chats/507f1f77bcf86cd799439011/members/507f1f77bcf86cd799439022
+```
+
 **Validation Rules:**
+
 - Only works for group chats
 - Users can remove themselves, or admin can remove others
-- Use "me" as userId to remove yourself: `/chats/:chatId/members/me`
+- Use "me" as userId to remove yourself
 - Admin cannot leave without transferring ownership first
 - Chat is deleted if last member leaves
 
 **Response (200):**
+
 ```json
 {
   "success": true,
   "message": "Member removed successfully"
 }
 ```
+
+**Error Responses:**
+
+- `400` - Cannot remove from private chat
+- `403` - Not authorized (admin trying to leave without transfer)
+- `404` - Chat or user not found
 
 ---
 
@@ -691,26 +888,28 @@ Authorization: Bearer {accessToken}
 All message endpoints require authentication.
 
 ### POST `/api/v1/chats/:chatId/messages`
+
 Send a message to a chat.
 
-**Headers:**
-```
+**Request:**
+
+```http
+POST /api/v1/chats/507f1f77bcf86cd799439011/messages
 Authorization: Bearer {accessToken}
 Content-Type: application/json
-```
 
-**Request Body:**
-```json
 {
   "content": "Hello, world!"
 }
 ```
 
 **Validation Rules:**
+
 - `content`: Required, non-empty string, maximum 5000 characters
 - User must be a participant of the chat
 
 **Response (201):**
+
 ```json
 {
   "success": true,
@@ -730,27 +929,33 @@ Content-Type: application/json
 }
 ```
 
+**Error Responses:**
+
+- `400` - Validation error (empty content, too long, etc.)
+- `403` - User is not a participant
+- `404` - Chat not found
+
 ---
 
 ### GET `/api/v1/chats/:chatId/messages`
+
 Get messages from a chat with pagination.
 
-**Headers:**
-```
+**Request:**
+
+```http
+GET /api/v1/chats/507f1f77bcf86cd799439011/messages?page=1&limit=50&sort=createdAt
 Authorization: Bearer {accessToken}
 ```
 
 **Query Parameters:**
+
 - `page` (optional): Page number, default: 1
 - `limit` (optional): Items per page, default: 50, max: 100
 - `sort` (optional): Sort fields, default: "createdAt" (ascending)
 
-**Example:**
-```
-GET /api/v1/chats/chatId/messages?page=1&limit=50&sort=createdAt
-```
-
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -785,14 +990,18 @@ GET /api/v1/chats/chatId/messages?page=1&limit=50&sort=createdAt
 ---
 
 ### GET `/api/v1/chats/:chatId/messages/:messageId`
+
 Get a specific message by ID.
 
-**Headers:**
-```
+**Request:**
+
+```http
+GET /api/v1/chats/507f1f77bcf86cd799439011/messages/507f1f77bcf86cd799439022
 Authorization: Bearer {accessToken}
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -816,29 +1025,37 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Error Responses:**
+
+- `400` - Invalid message ID
+- `403` - User is not in the chat
+- `404` - Message not found
+
 ---
 
 ### PATCH `/api/v1/chats/:chatId/messages/:messageId`
+
 Edit a message.
 
-**Headers:**
-```
+**Request:**
+
+```http
+PATCH /api/v1/chats/507f1f77bcf86cd799439011/messages/507f1f77bcf86cd799439022
 Authorization: Bearer {accessToken}
 Content-Type: application/json
-```
 
-**Request Body:**
-```json
 {
   "content": "Updated message content"
 }
 ```
 
 **Validation Rules:**
+
 - `content`: Required, non-empty string, maximum 5000 characters
 - Only the message sender can edit their own messages
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -858,20 +1075,31 @@ Content-Type: application/json
 }
 ```
 
+**Error Responses:**
+
+- `400` - Validation error
+- `403` - User is not the message sender
+- `404` - Message not found
+
 ---
 
 ### DELETE `/api/v1/chats/:chatId/messages/:messageId`
+
 Delete a message.
 
-**Headers:**
-```
+**Request:**
+
+```http
+DELETE /api/v1/chats/507f1f77bcf86cd799439011/messages/507f1f77bcf86cd799439022
 Authorization: Bearer {accessToken}
 ```
 
 **Validation Rules:**
+
 - Only the message sender can delete their own messages
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -879,295 +1107,96 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+**Error Responses:**
+
+- `400` - Invalid message ID
+- `403` - User is not the message sender
+- `404` - Message not found
+
 ---
 
-## Socket.io Events
+## Health Check
 
-### Connection
+### GET `/health`
 
-Connect to the Socket.io server with authentication:
+Check application health status.
 
-```javascript
-const socket = io('http://localhost:3000', {
-  auth: {
-    token: 'your_jwt_access_token'
+**Request:**
+
+```http
+GET /health
+```
+
+**Response (200):**
+
+```json
+{
+  "uptime": 123.456,
+  "timestamp": 1705838400000,
+  "status": "OK",
+  "environment": "development",
+  "version": "1.0.0",
+  "checks": {
+    "database": "connected"
   }
-});
-```
-
-### Client → Server Events
-
-#### `chat:join`
-Join a chat room to receive real-time messages.
-
-**Data:**
-```json
-{
-  "chatId": "chatId"
 }
 ```
 
-**Example:**
-```javascript
-socket.emit('chat:join', { chatId: 'chatId123' });
-```
+**Response (503) - Database Disconnected:**
 
----
-
-#### `chat:leave`
-Leave a chat room.
-
-**Data:**
 ```json
 {
-  "chatId": "chatId"
+  "uptime": 123.456,
+  "timestamp": 1705838400000,
+  "status": "DEGRADED",
+  "environment": "development",
+  "version": "1.0.0",
+  "checks": {
+    "database": "disconnected"
+  }
 }
 ```
 
-**Example:**
-```javascript
-socket.emit('chat:leave', { chatId: 'chatId123' });
-```
-
 ---
 
-#### `message:delivered`
-Mark a message as delivered.
+## Error Codes
 
-**Data:**
+| Code                    | Status | Description              |
+| ----------------------- | ------ | ------------------------ |
+| `VALIDATION_ERROR`      | 400    | Input validation failed  |
+| `AUTHENTICATION_ERROR`  | 401    | Invalid or expired token |
+| `FORBIDDEN`             | 403    | Insufficient permissions |
+| `NOT_FOUND`             | 404    | Resource not found       |
+| `CONFLICT`              | 409    | Duplicate resource       |
+| `PAYLOAD_TOO_LARGE`     | 413    | File too large           |
+| `RATE_LIMIT_EXCEEDED`   | 429    | Too many requests        |
+| `INTERNAL_SERVER_ERROR` | 500    | Server error             |
+
+## Rate Limiting
+
+Currently not implemented, but the error code is reserved for future use.
+
+## Postman Collection
+
+Import this base collection to get started:
+
 ```json
 {
-  "messageId": "messageId"
+  "info": {
+    "name": "fastchat API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    }
+  ]
 }
 ```
 
-**Example:**
-```javascript
-socket.emit('message:delivered', { messageId: 'msg123' });
-```
-
----
-
-#### `message:read`
-Mark a message as read.
-
-**Data:**
-```json
-{
-  "messageId": "messageId"
-}
-```
-
-**Example:**
-```javascript
-socket.emit('message:read', { messageId: 'msg123' });
-```
-
----
-
-#### `message:start-typing`
-Indicate that user started typing in a chat.
-
-**Data:**
-```json
-{
-  "chatId": "chatId"
-}
-```
-
-**Example:**
-```javascript
-socket.emit('message:start-typing', { chatId: 'chatId123' });
-```
-
----
-
-#### `message:stop-typing`
-Indicate that user stopped typing in a chat.
-
-**Data:**
-```json
-{
-  "chatId": "chatId"
-}
-```
-
-**Example:**
-```javascript
-socket.emit('message:stop-typing', { chatId: 'chatId123' });
-```
-
----
-
-### Server → Client Events
-
-#### `message:new`
-Received when a new message is sent in a chat.
-
-**Data:**
-```json
-{
-  "id": "messageId",
-  "content": "Hello!",
-  "sender": "userId",
-  "chat": "chatId",
-  "status": "sent",
-  "type": "text",
-  "createdAt": "2024-01-21T10:30:00.000Z",
-  "updatedAt": "2024-01-21T10:30:00.000Z"
-}
-```
-
-**Example:**
-```javascript
-socket.on('message:new', (message) => {
-  console.log('New message:', message);
-});
-```
-
----
-
-#### `message:updated`
-Received when a message is edited.
-
-**Data:**
-```json
-{
-  "id": "messageId",
-  "content": "Updated content",
-  "sender": "userId",
-  "chat": "chatId",
-  "status": "sent",
-  "type": "text",
-  "createdAt": "2024-01-21T10:30:00.000Z",
-  "updatedAt": "2024-01-21T10:35:00.000Z"
-}
-```
-
-**Example:**
-```javascript
-socket.on('message:updated', (message) => {
-  console.log('Message updated:', message);
-});
-```
-
----
-
-#### `message:deleted`
-Received when a message is deleted.
-
-**Data:**
-```json
-{
-  "messageId": "messageId"
-}
-```
-
-**Example:**
-```javascript
-socket.on('message:deleted', (data) => {
-  console.log('Message deleted:', data.messageId);
-});
-```
-
----
-
-#### `user:online`
-Received when a user comes online.
-
-**Data:**
-```json
-{
-  "userId": "userId"
-}
-```
-
-**Example:**
-```javascript
-socket.on('user:online', (data) => {
-  console.log('User came online:', data.userId);
-});
-```
-
----
-
-#### `user:offline`
-Received when a user goes offline.
-
-**Data:**
-```json
-{
-  "userId": "userId"
-}
-```
-
-**Example:**
-```javascript
-socket.on('user:offline', (data) => {
-  console.log('User went offline:', data.userId);
-});
-```
-
----
-
-#### `message:start-typing`
-Received when a user starts typing in a chat.
-
-**Data:**
-```json
-{
-  "userId": "userId",
-  "chatId": "chatId"
-}
-```
-
-**Example:**
-```javascript
-socket.on('message:start-typing', (data) => {
-  console.log(`User ${data.userId} is typing in chat ${data.chatId}`);
-});
-```
-
----
-
-#### `message:stop-typing`
-Received when a user stops typing in a chat.
-
-**Data:**
-```json
-{
-  "userId": "userId",
-  "chatId": "chatId"
-}
-```
-
-**Example:**
-```javascript
-socket.on('message:stop-typing', (data) => {
-  console.log(`User ${data.userId} stopped typing in chat ${data.chatId}`);
-});
-```
-
----
-
-### Connection Events
-
-#### `connection`
-Fired when successfully connected to the server.
-
-```javascript
-socket.on('connect', () => {
-  console.log('Connected to server');
-});
-```
-
----
-
-#### `disconnect`
-Fired when disconnected from the server.
-
-```javascript
-socket.on('disconnect', (reason) => {
-  console.log('Disconnected:', reason);
-});
-```
+Set the `accessToken` variable after login to automatically include it in authenticated requests.

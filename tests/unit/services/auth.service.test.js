@@ -1,6 +1,6 @@
 const authService = require('@services/auth.service')
 const { ConflictError, AuthError } = require('@errors/errors')
-const { createMockUser, createObjectId } = require('@tests/helpers')
+const { createMockUser, createObjectId } = require('@tests/unit/helpers')
 
 jest.mock('@repositories')
 jest.mock('@services/auth/credentials')

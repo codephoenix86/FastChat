@@ -1,6 +1,10 @@
 module.exports = {
   testEnvironment: 'node',
   coverageDirectory: 'coverage',
+
+  // Enable parallel test execution
+  maxWorkers: '50%', // Use 50% of available CPU cores
+
   moduleNameMapper: {
     // root aliases
     '^@$': '<rootDir>/src',
@@ -22,8 +26,8 @@ module.exports = {
     '^@controllers$': '<rootDir>/src/controllers',
     '^@controllers/(.*)$': '<rootDir>/src/controllers/$1',
 
-    '^@docs$': '<rootDir>/src/docs',
-    '^@docs/(.*)$': '<rootDir>/src/docs/$1',
+    '^@docs$': '<rootDir>/docs',
+    '^@docs/(.*)$': '<rootDir>/docs/$1',
 
     '^@middlewares$': '<rootDir>/src/middlewares',
     '^@middlewares/(.*)$': '<rootDir>/src/middlewares/$1',
@@ -43,8 +47,8 @@ module.exports = {
     '^@sockets$': '<rootDir>/src/sockets',
     '^@sockets/(.*)$': '<rootDir>/src/sockets/$1',
 
-    '^@tests$': '<rootDir>/src/tests',
-    '^@tests/(.*)$': '<rootDir>/src/tests/$1',
+    '^@tests$': '<rootDir>/tests',
+    '^@tests/(.*)$': '<rootDir>/tests/$1',
 
     '^@utils$': '<rootDir>/src/utils',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
@@ -62,9 +66,10 @@ module.exports = {
     '^@response$': '<rootDir>/src/utils/response',
     '^@response/(.*)$': '<rootDir>/src/utils/response/$1',
   },
+
   collectCoverageFrom: [
     'src/**/*.js',
-    '!src/docs/**',
+    '!docs/**',
     '!src/config/index.js',
     '!src/constants/index.js',
     '!src/controllers/index.js',
@@ -78,13 +83,17 @@ module.exports = {
     '!src/sockets/handlers/index.js',
     '!src/utils/index.js',
   ],
-  testMatch: ['**/tests/**/*.test.js'],
+
+  testMatch: ['<rootDir>/tests/**/*.test.js'],
   verbose: true,
-  testTimeout: 10000,
+  testTimeout: 30000, // Increased for in-memory DB
+
+  // Better cleanup between tests
   clearMocks: true,
-  resetMocks: true,
   restoreMocks: true,
-  setupFilesAfterEnv: ['<rootDir>/src/tests/setup.js'],
+
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+
   coverageThreshold: {
     global: {
       branches: 70,
@@ -92,5 +101,10 @@ module.exports = {
       lines: 70,
       statements: 70,
     },
+  },
+
+  // Isolation between test files
+  testEnvironmentOptions: {
+    NODE_ENV: 'test',
   },
 }

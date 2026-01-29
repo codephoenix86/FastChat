@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator')
 const validate = require('@middlewares/validation.middleware')
 const { ValidationError } = require('@errors/errors')
-const { mockRequest, mockResponse, mockNext } = require('@tests/helpers')
+const { mockRequest, mockResponse, mockNext } = require('@tests/unit/helpers')
 
 jest.mock('express-validator')
 
